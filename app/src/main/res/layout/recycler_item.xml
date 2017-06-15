@@ -1,0 +1,28 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="12dp"
+    android:orientation="vertical"
+    >
+  <TextView
+      android:text="UserId: "
+      android:id="@+id/userId"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textSize="18dp"
+      />
+  <TextView
+      android:id="@+id/id"
+      android:text="Id: "
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textSize="18dp"
+     />
+  <TextView
+      android:id="@+id/title"
+      android:text="Title: "
+      android:textSize="18dp"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+   />
+</LinearLayout>
