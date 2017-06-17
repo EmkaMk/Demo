@@ -11,4 +11,6 @@ public interface MainView {
     void setPhotoItems(List<Post> items);
 
     void redirectToGraphScreen();
+
+
 }

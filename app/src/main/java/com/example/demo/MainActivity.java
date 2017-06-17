@@ -1,14 +1,23 @@
 package com.example.demo;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import com.example.demo.data.Post;
 import com.example.demo.navDrawer.NavigationDrawerAdapter;
 import com.example.demo.navDrawer.NavigationDrawerView;
 import com.example.demo.recyclerView.RecyclerViewFragment;
+import com.google.gson.Gson;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import rx.functions.Action1;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,10 +43,27 @@ public class MainActivity extends AppCompatActivity {
       @Override public void call(String s) {
         RecyclerViewFragment fragment = new RecyclerViewFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.mainContent, fragment);
+        transaction.replace(R.id.recycler_view_fragment, fragment);
         transaction.commit();
         navigationDrawerView.closeDrawer();
       }
     });
+  }
+
+  private void read() {
+    Set<String> tasksSet = PreferenceManager.getDefaultSharedPreferences(this)
+        .getStringSet("tasks_set", new HashSet<String>());
+    List<String> tasksList = new ArrayList<String>(tasksSet);
+  }
+
+  private void write() {
+    List tasks = new ArrayList<String>();
+    Set<Post> tasksSet = new HashSet<Post>(tasks);
+    final Gson gson = new Gson();
+    String serializedObject = gson.toJson(tasksSet);
+    /*PreferenceManager.getDefaultSharedPreferences(this)
+        .edit()
+        .putStringSet("tasks_set", serializedObject)
+        .commit();*/
   }
 }

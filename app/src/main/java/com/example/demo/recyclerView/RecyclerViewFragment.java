@@ -3,6 +3,7 @@ package com.example.demo.recyclerView;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
@@ -76,8 +77,10 @@ public class RecyclerViewFragment extends Fragment implements MainView {
 
   @Override public void redirectToGraphScreen() {
     LineGraphFragment fragment = new LineGraphFragment();
-    FragmentTransaction transaction = this.getChildFragmentManager().beginTransaction();
+    //FragmentManager manager=getFragmentManager();
+    FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
     transaction.replace(R.id.mainContent, fragment);
     transaction.commit();
+
   }
 }
