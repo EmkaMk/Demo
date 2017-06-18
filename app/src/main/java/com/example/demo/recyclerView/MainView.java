@@ -1,6 +1,8 @@
 package com.example.demo.recyclerView;
 
 import com.example.demo.data.Post;
+
+import java.util.ArrayList;
 import java.util.List;
 import rx.Observable;
 
@@ -10,7 +12,7 @@ public interface MainView {
 
     void setPhotoItems(List<Post> items);
 
-    void redirectToGraphScreen();
+    void redirectToGraphScreen(ArrayList<Post> posts);
 
 
 }

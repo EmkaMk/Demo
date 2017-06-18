@@ -43,27 +43,12 @@ public class MainActivity extends AppCompatActivity {
       @Override public void call(String s) {
         RecyclerViewFragment fragment = new RecyclerViewFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.recycler_view_fragment, fragment);
+        transaction.replace(R.id.mainContent, fragment);
         transaction.commit();
         navigationDrawerView.closeDrawer();
       }
     });
   }
 
-  private void read() {
-    Set<String> tasksSet = PreferenceManager.getDefaultSharedPreferences(this)
-        .getStringSet("tasks_set", new HashSet<String>());
-    List<String> tasksList = new ArrayList<String>(tasksSet);
-  }
 
-  private void write() {
-    List tasks = new ArrayList<String>();
-    Set<Post> tasksSet = new HashSet<Post>(tasks);
-    final Gson gson = new Gson();
-    String serializedObject = gson.toJson(tasksSet);
-    /*PreferenceManager.getDefaultSharedPreferences(this)
-        .edit()
-        .putStringSet("tasks_set", serializedObject)
-        .commit();*/
-  }
 }

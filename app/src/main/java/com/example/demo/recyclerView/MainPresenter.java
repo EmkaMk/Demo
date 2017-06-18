@@ -5,6 +5,10 @@ import com.example.demo.data.Post;
 import com.example.demo.network.DaggerDataServiceComponent;
 import com.example.demo.network.DataService;
 import com.example.demo.network.DataServiceProvider;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
 import rx.Subscription;
@@ -14,6 +18,7 @@ import rx.functions.Action1;
 public class MainPresenter extends Presenter<MainView> {
 
   @Inject DataService dataService;
+    private List<Post> posts;
 
   public MainPresenter() {
     DaggerDataServiceComponent.builder()
@@ -43,7 +48,8 @@ public class MainPresenter extends Presenter<MainView> {
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Action1<List<Post>>() {
           @Override public void call(List<Post> postItems) {
-            getView().setPhotoItems(postItems);
+              posts= postItems;
+              getView().setPhotoItems(postItems);
           }
         });
   }
@@ -51,7 +57,7 @@ public class MainPresenter extends Presenter<MainView> {
   private Subscription redirectToGraphs() {
     return getView().onFloatButtonClick().subscribe(new Action1<Object>() {
       @Override public void call(Object o) {
-        getView().redirectToGraphScreen();
+          getView().redirectToGraphScreen(new ArrayList<>(posts));
       }
     });
   }
