@@ -33,6 +33,8 @@ public class LineGraphFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        posts = getArguments().getParcelableArrayList("posts");
+        //savedInstanceState.getParcelableArrayList("posts");
 
     }
 
@@ -43,7 +45,6 @@ public class LineGraphFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.graph_layout, container, false);
         ButterKnife.bind(this, rootView);
         setData();
-       posts = savedInstanceState.getParcelableArrayList("posts");
         lineChart.setTouchEnabled(true);
         lineChart.setDragEnabled(true);
         lineChart.setScaleEnabled(true);

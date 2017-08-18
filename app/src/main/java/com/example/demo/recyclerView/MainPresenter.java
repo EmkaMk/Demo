@@ -18,7 +18,7 @@ import rx.functions.Action1;
 public class MainPresenter extends Presenter<MainView> {
 
   @Inject DataService dataService;
-    private List<Post> posts;
+  private List<Post> posts;
 
   public MainPresenter() {
     DaggerDataServiceComponent.builder()
@@ -38,18 +38,28 @@ public class MainPresenter extends Presenter<MainView> {
   }
 
   private Subscription loadPhotos() {
+  if(getView().getPhotoItems()==null)
+  {
+    return fetchPostsFromRemote();
+  }
+  return fetchPostsFromRemote();
+
+  }
+
+  private Subscription fetchPostsFromRemote(){
     return dataService.fetchPosts()
         .doOnError(new Action1<Throwable>() {
-              @Override public void call(Throwable throwable) {
-                throwable.printStackTrace();
-              }
-            })
+          @Override public void call(Throwable throwable) {
+            throwable.printStackTrace();
+          }
+        })
         .map(photos -> photos.subList(0, 100))
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(new Action1<List<Post>>() {
           @Override public void call(List<Post> postItems) {
-              posts= postItems;
-              getView().setPhotoItems(postItems);
+            posts = postItems;
+            getView().savePhotoItems(postItems);
+            getView().setPhotoItems(postItems);
           }
         });
   }
@@ -57,7 +67,7 @@ public class MainPresenter extends Presenter<MainView> {
   private Subscription redirectToGraphs() {
     return getView().onFloatButtonClick().subscribe(new Action1<Object>() {
       @Override public void call(Object o) {
-          getView().redirectToGraphScreen(new ArrayList<>(posts));
+        getView().redirectToGraphScreen(new ArrayList<>(posts));
       }
     });
   }
