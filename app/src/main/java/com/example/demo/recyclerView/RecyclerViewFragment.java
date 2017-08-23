@@ -44,10 +44,8 @@ public class RecyclerViewFragment extends Fragment implements MainView {
   @Bind(R.id.graphButton) FloatingActionButton graphButton;
   @Inject RecyclerAdapter recyclerAdapter;
   @Inject MainPresenter mainPresenter;
-
-
-
-  private Context context;
+  private SharedPreferences sharedPreferences;
+  private Gson gson;
 
   @Override public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -59,11 +57,12 @@ public class RecyclerViewFragment extends Fragment implements MainView {
         .recyclerAdapterProvider(new RecyclerAdapterProvider())
         .build()
         .inject(this);
+    gson = new Gson();
   }
 
   @Override public void onAttach(Context context) {
     super.onAttach(context);
-    this.context = context;
+    sharedPreferences = context.getSharedPreferences("photoItems", Context.MODE_PRIVATE);
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -96,37 +95,30 @@ public class RecyclerViewFragment extends Fragment implements MainView {
     return RxView.clicks(graphButton);
   }
 
-  @Override public void setPhotoItems(List<Post> items) {
+  @Override public void setItems(List<Post> items) {
     recyclerAdapter.setPostItems(items);
   }
 
-  @Override public void savePhotoItems(List<Post> items) {
-    if (context != null) {
-      SharedPreferences sharedPreferences =
-          context.getSharedPreferences("photoItems", Context.MODE_PRIVATE);
-      SharedPreferences.Editor editor = sharedPreferences.edit();
-      Gson gson = new Gson();
-      Set<String> serializedItems = new HashSet<>();
-      for (Post post : items) {
-        String json = gson.toJson(post);
-        serializedItems.add(json);
-      }
-      editor.putStringSet("photoItems", serializedItems);
-      editor.commit();
+  @Override public void saveItems(List<Post> items) {
+    SharedPreferences.Editor editor = sharedPreferences.edit();
+    Set<String> serializedItems = new HashSet<>();
+    for (Post post : items) {
+      String json = gson.toJson(post);
+      serializedItems.add(json);
     }
+    editor.putStringSet("photoItems", serializedItems);
+    editor.commit();
   }
 
-  @Override public Set<Post> getPhotoItems() {
-    SharedPreferences sharedPref = context.getSharedPreferences("photoItems", Context.MODE_PRIVATE);
-    Set<String> items = sharedPref.getStringSet("photoItems", new HashSet<>());
-    GsonBuilder builder=new GsonBuilder();
+  @Override public Set<Post> getItems() {
+    Set<String> items = sharedPreferences.getStringSet("photoItems", new HashSet<>());
+    GsonBuilder builder = new GsonBuilder();
     Post.registerDeserializer(builder);
     Set<Post> photoItems = new HashSet<>();
     for (String item : items) {
-     Post post = builder.create().fromJson(item, Post.class);
+      Post post = builder.create().fromJson(item, Post.class);
       photoItems.add(post);
     }
-
     return photoItems;
   }
 

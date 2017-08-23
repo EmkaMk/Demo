@@ -10,11 +10,11 @@ public interface MainView {
 
   Observable<?> onFloatButtonClick();
 
-  void setPhotoItems(List<Post> items);
+  void setItems(List<Post> items);
 
-  void savePhotoItems(List<Post> items);
+  void saveItems(List<Post> items);
 
-  Set<Post> getPhotoItems();
+  Set<Post> getItems();
 
   void redirectToGraphScreen(ArrayList<Post> posts);
 }

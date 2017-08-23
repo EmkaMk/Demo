@@ -6,11 +6,10 @@ import com.example.demo.network.DaggerDataServiceComponent;
 import com.example.demo.network.DataService;
 import com.example.demo.network.DataServiceProvider;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
+import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -29,7 +28,7 @@ public class MainPresenter extends Presenter<MainView> {
 
   @Override protected void onTakeView() {
     super.onTakeView();
-    addViewSubscription(loadPhotos());
+    addViewSubscription(getData());
     addViewSubscription(redirectToGraphs());
   }
 
@@ -37,31 +36,37 @@ public class MainPresenter extends Presenter<MainView> {
     super.dropView();
   }
 
-  private Subscription loadPhotos() {
-  if(getView().getPhotoItems()==null)
-  {
-    return fetchPostsFromRemote();
+  private Subscription getData() {
+    return loadPhotos().doOnError(new Action1<Throwable>() {
+      @Override public void call(Throwable throwable) {
+        throwable.printStackTrace();
+      }
+    }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<Post>>() {
+      @Override public void call(List<Post> postItems) {
+        getView().setItems(postItems);
+        posts = postItems;
+      }
+    });
   }
-  return fetchPostsFromRemote();
 
+  private Observable<List<Post>> loadPhotos() {
+    if (getView().getItems().size() == 0) {
+      return fetchPostsFromRemote();
+    } else {
+      return Observable.just(new ArrayList<>(getView().getItems()));
+    }
   }
 
-  private Subscription fetchPostsFromRemote(){
-    return dataService.fetchPosts()
-        .doOnError(new Action1<Throwable>() {
-          @Override public void call(Throwable throwable) {
-            throwable.printStackTrace();
-          }
-        })
-        .map(photos -> photos.subList(0, 100))
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Action1<List<Post>>() {
-          @Override public void call(List<Post> postItems) {
-            posts = postItems;
-            getView().savePhotoItems(postItems);
-            getView().setPhotoItems(postItems);
-          }
-        });
+  private Observable<List<Post>> fetchPostsFromRemote() {
+    return dataService.fetchPosts().doOnError(new Action1<Throwable>() {
+      @Override public void call(Throwable throwable) {
+        throwable.printStackTrace();
+      }
+    }).map(photos -> photos.subList(0, 100)).doOnNext(new Action1<List<Post>>() {
+      @Override public void call(List<Post> postItems) {
+        getView().saveItems(postItems);
+      }
+    });
   }
 
   private Subscription redirectToGraphs() {
